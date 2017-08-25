@@ -1,8 +1,23 @@
-var TIMEOUT_IN_SECS = 3 * 60
+var TIMEOUT_IN_SECS = 3 * 60                       
+var TIMEOUT_TO_ALERT = 30                          
+var REMIND_MSG = '\nRemind me after (in seconds):'
 var TEMPLATE = '<h1><span class="js-timer-minutes">00</span>:<span class="js-timer-seconds">00</span></h1>'
+var QUOTES = [
+  "Work hard in silence, let your success be your noise.",
+  "Success doesn’t come from what you do occasionally, it comes from what you do consistently.",
+  "Great things never came from comfort zones.",
+  "Success is never owned; it is only rented – and the rent is due every day.",
+  "Working hard for something we don’t care about is called stress; working hard for something we love is called passion.",
+  "If the plan doesn’t work, change the plan but never the goal."
+]
 
 function padZero(number){
   return ("00" + String(number)).slice(-2);
+}
+
+function getQuote(){
+   quote = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+   return quote + REMIND_MSG;
 }
 
 class Timer{
@@ -31,6 +46,9 @@ class Timer{
     this.timestampOnStart = null
     this.isRunning = false
   }
+  update(secs){
+    this.timeout_in_secs = secs;
+  }
   calculateSecsLeft(){
     if (!this.isRunning)
       return this.timeout_in_secs
@@ -53,7 +71,7 @@ class TimerWidget{
     // adds HTML tag to current page
     this.timerContainer = document.createElement('div')
 
-    this.timerContainer.setAttribute("style", "height: 100px;")
+    this.timerContainer.setAttribute("style", "position: fixed; left: 25px; top: 48px; z-index: 1;")
     this.timerContainer.innerHTML = TEMPLATE
 
     rootTag.insertBefore(this.timerContainer, rootTag.firstChild)
@@ -88,6 +106,14 @@ function main(){
   function handleIntervalTick(){
     var secsLeft = timer.calculateSecsLeft()
     timerWiget.update(secsLeft)
+    if (secsLeft <= 0){
+      timer.stop();
+      var msg = getQuote();
+      var userInput = prompt(getQuote(msg, TIMEOUT_TO_ALER));
+      var secs = parseInt(userInput) || TIMEOUT_TO_ALERT;
+      timer.update(secs);
+      timer.start();
+    }
   }
 
   function handleVisibilityChange(){

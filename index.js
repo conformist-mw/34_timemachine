@@ -108,8 +108,7 @@ function main(){
     timerWiget.update(secsLeft)
     if (secsLeft <= 0){
       timer.stop();
-      var msg = getQuote();
-      var userInput = prompt(getQuote(msg, TIMEOUT_TO_ALER));
+      var userInput = prompt(getQuote(), TIMEOUT_TO_ALERT);
       var secs = parseInt(userInput) || TIMEOUT_TO_ALERT;
       timer.update(secs);
       timer.start();
